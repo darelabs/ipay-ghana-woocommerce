@@ -1,0 +1,21 @@
+{
+  "name": "darelabs/ipay-ghana-woocommerce",
+  "description": "Receive mobile payments on your WooCommerce store in Ghana.",
+  "type": "wordpress-plugin",
+  "keywords": [
+    "payment",
+    "woocommerce",
+    "wordpress-plugin"
+  ],
+  "homepage": "https://www.ipaygh.com/",
+  "license": "GPL-3.0",
+  "support": {
+    "page": "https://www.ipaygh.com/pages/help-support/",
+    "issues": "https://github.com/darelabs/ipay-ghana-woocommerce/issues/",
+    "wiki": "https://github.com/darelabs/ipay-ghana-woocommerce/wiki/"
+  },
+  "require": {
+    "composer/installers": "~1.0",
+    "php": ">=5.4"
+  }
+}

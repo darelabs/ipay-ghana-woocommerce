@@ -1,0 +1,8 @@
+label[for="payment_method_ipay-ghana-wc-payment"] {
+    height: 75px !important;
+    line-height: 75px !important;
+}
+img[alt="iPay"] {
+    max-height: none !important;
+    height: auto !important;
+}
