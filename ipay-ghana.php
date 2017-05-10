@@ -106,7 +106,7 @@ function init_ipay_ghana_wc_payment_gateway() {
 						'title'       => __( 'Description', '' ),
 						'type'        => 'textarea',
 						'description' => __( 'Payment method description that the customer will see on your checkout.', '' ),
-						'default'     => __( 'You will be redirected to the iPay Ghana Payment Gateway checkout page so as to complete payment.', '' ),
+						'default'     => __( 'Pay with MTN Mobile Money, Vodafone Cash, Tigo Cash, Airtel Money, VISA, MasterCard. No need to have an iPay Account to pay.', '' ),
 						'desc_tip'    => true,
 					),
 					'checkout_on_site' => array(
