@@ -41,7 +41,7 @@ function ipay_ghana_plugin_action( $actions, $plugin_file ) {
 		return $actions;
 	}
 	$settings_link = '<a href="' . admin_url( 'admin.php?page=wc-settings&tab=checkout&section=ipay-ghana-wc-payment' ) . '">Settings</a>';
-	
+
 	array_unshift( $actions, $settings_link );
 	return $actions;
 }
@@ -65,11 +65,9 @@ function init_ipay_ghana_wc_payment_gateway() {
 				$this->icon                 = plugins_url( '/assets/img/powered-by-ipay-ghana.png', __FILE__ );
 				$this->has_fields           = true;
 				$this->method_title         = __( 'iPay Ghana Payment', '' );
-				$this->method_description   = __( 'Receive payments on your WooCommerce store in Ghana.', '' );
 				$this->init_form_fields();
 				$this->init_settings();
 				$this->title                = $this->get_option( 'title' );
-				$this->description          = $this->get_option( 'description' );
 				$this->ipn_url              = str_replace( 'https:', 'http:', home_url( '/wc-api/Ipay_Ghana_WC_Payment_Gateway' ) );
 
 				add_action( 'admin_notices', array( $this, 'do_ssl_check' ) );
@@ -100,13 +98,6 @@ function init_ipay_ghana_wc_payment_gateway() {
 						'class'       => 'is-read-only',
 						'description' => __( 'This controls the title which the user sees during checkout.', '' ),
 						'default'     => __( 'iPay', '' ),
-						'desc_tip'    => true,
-					),
-					'description' => array(
-						'title'       => __( 'Description', '' ),
-						'type'        => 'textarea',
-						'description' => __( 'Payment method description that the customer will see on your checkout.', '' ),
-						'default'     => __( 'Pay with MTN Mobile Money, Vodafone Cash, Tigo Cash, Airtel Money, VISA, MasterCard. No need to have an iPay Account to pay.', '' ),
 						'desc_tip'    => true,
 					),
 					'checkout_on_site' => array(
@@ -145,7 +136,7 @@ function init_ipay_ghana_wc_payment_gateway() {
 			public function payment_fields() {
 				if ( $this->get_option( 'checkout_on_site' ) === 'no' ) {
 					//to iPay Checkout name="checkout"
-					echo wpautop( wptexturize( $this->description ) );
+					echo wptexturize( __( 'Pay with MTN Mobile Money, Vodafone Cash, Tigo Cash, Airtel Money, VISA, MasterCard. No need to have an iPay Account to pay.' ) );
 				} else {
 					echo '<p class="form-group">
 					<label for="network_operator">Select Network</label>
@@ -262,7 +253,7 @@ function init_ipay_ghana_wc_payment_gateway() {
 				// Check iPay Ghana response
 				// if success, reduce corresponding stock and mark transaction status as complete
 				// if failed or declined, mark transaction status as canceled
-				
+
 //				$order->payment_complete();
 
 //				return array(
