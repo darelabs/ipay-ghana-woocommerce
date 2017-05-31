@@ -100,6 +100,13 @@ function init_ipay_ghana_wc_payment_gateway() {
 						'default'     => __( 'iPay', '' ),
 						'desc_tip'    => true,
 					),
+					'extra_project_name' => array(
+						'title'       => __( 'Extra project name', '' ),
+						'type'        => 'text',
+						'description' => __( 'Additional information you want to show beside your company name on the checkout page.', '' ),
+						'default'     => __( '', '' ),
+						'desc_tip'    => true,
+					),
 					'checkout_on_site' => array(
 						'title'       => __( 'Collect payment onsite', '' ),
 						'type'        => 'checkbox',
@@ -241,6 +248,7 @@ function init_ipay_ghana_wc_payment_gateway() {
 				<input type="hidden" name="cancelled_url" value="' . esc_url( $this->get_option( 'cancelled_url' ) ) . '">
 				<input type="hidden" name="invoice_id" value="' . str_replace( '#', '', $order->get_order_number() ) . '">
 				<input type="hidden" name="total" value="' . $order->get_total() . '">
+				<input type="hidden" name="extra_project_name" value="' . $this->get_option( 'extra_project_name' ) . '">
 				<div class="btn-submit-payment" style="display: none;">
 				<button type="submit" class="button alt" id="submit-payload-to-ipay-ghana-wc-payment-gateway-checkout-url">' . __( 'Checkout with iPay Ghana', '' ) . '</button>
 				</div>
