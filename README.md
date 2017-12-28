@@ -45,7 +45,7 @@ In order to do that, do follow the steps below:
 5. Remember to click on the 'Save changes' button so as to effect your modifications.
 
 ### I do not have a Merchant key. How do I get one?
-Visit our [get started](https://manage.ipaygh.com/xmanage/get-started/) page and sign up with the easy steps provided.
+Visit our [get started](https://manage.ipaygh.com/xmanage/get-started) page and sign up with the easy steps provided.
 
 ### Do I need to pay something before opening an account?
 A BIG no.
