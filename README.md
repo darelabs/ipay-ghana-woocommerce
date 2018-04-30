@@ -7,6 +7,9 @@ Yes. All you need is a WordPress powered website (whether on [WordPress.com](htt
 
 Otherwise, simply contact your website administrator for assistance.
 
+### How do I download it?
+You can download the latest stable version of iPay Ghana WooCommerce WordPress plugin in your prefered format [zip format](https://github.com/darelabs/ipay-ghana-woocommerce/archive/1.0.0.zip) or [tar.gz format](https://github.com/darelabs/ipay-ghana-woocommerce/archive/1.0.0.tar.gz).
+
 ### How do I install it?
 There are several options you can choose from to getting iPay Ghana WordPress plugin installed.
 Below are two (2) ways you may choose from depending on your preferences and access level to your server and or WordPress site.
