@@ -3,7 +3,7 @@
 Plugin Name: iPay Ghana WooCommerce
 Plugin URI: https://www.ipaygh.com/
 Description: Receive payments on your WooCommerce store in Ghana. Already have an account? Open one with us <a href="https://manage.ipaygh.com/xmanage/get-started">here</a>. Visit your <a href="https://manage.ipaygh.com/xmanage/">dashboard</a> to monitor your transactions.
-Version: 1.0.0-beta
+Version: 1.0.1
 Author: Digital Dreams Ltd.
 Author URI: http://www.dareworks.com/
 Text Domain:
@@ -89,8 +89,10 @@ function init_ipay_ghana_wc_payment_gateway() {
 					'enabled' => array(
 						'title'       => __( 'Enable/Disable', '' ),
 						'type'        => 'checkbox',
+						'description' => __( 'Check in order to enable iPay Ghana WooCommerce Payment Gateway, otherwise, uncheck to disable.', '' ),
 						'label'       => __( 'Enable iPay Ghana Payment', '' ),
-						'default'     => 'no'
+						'default'     => 'no',
+						'desc_tip'    => true,
 					),
 					'title' => array(
 						'title'       => __( 'Title', '' ),
@@ -169,6 +171,19 @@ function init_ipay_ghana_wc_payment_gateway() {
 
 			public function process_payment( $order_id ) {
 				$order = new WC_Order( $order_id );
+				$items = $order->get_items();
+				
+				if ( version_compare( WC_VERSION, '3.0', '<' ) ) {
+					foreach ( $items as $item ) {
+						$items_array[] = $item['name'];
+					}
+				} else {
+					foreach ( $items as $item ) {
+						$items_array[] = $item->get_name();
+					}
+				}
+				
+				$list_items = implode( ', ', $items_array );
 
 				if ( $this->get_option( 'checkout_on_site' ) === 'no') {
 					return array(
@@ -181,6 +196,7 @@ function init_ipay_ghana_wc_payment_gateway() {
 					$payload = [
 						'on_site' => [
 							'merchant_key'               => $this->get_option( 'merchant_key' ),
+							'extra_src_currency'         => $order->get_currency(),
 							'total'             	     => $order->get_total(),
 							'invoice_id'                 => str_replace( '#', '', $order->get_order_number() ),
 							'extra_wallet_issuer_hint'   => ( isset( $_POST['extra_wallet_issuer_hint'] ) && ! empty( $_POST['extra_wallet_issuer_hint'] ) ) ? $_POST['extra_wallet_issuer_hint'] : $_POST['extra_wallet_issuer_hint'],
@@ -188,7 +204,7 @@ function init_ipay_ghana_wc_payment_gateway() {
 							'extra_name'         	     => $order->get_billing_first_name() . ' ' . $order->get_billing_last_name(),
 							'extra_mobile'         	     => $order->get_billing_phone(),
 							'extra_email'          	     => $order->get_billing_email(),
-							'description'          	     => get_bloginfo( 'name' ) . ' WooCommerce transaction Order ID: ' . $order_id,
+							'description'          	     => esc_attr( $list_items ),
 						]
 					];
 
@@ -234,8 +250,23 @@ function init_ipay_ghana_wc_payment_gateway() {
 			}
 
 			public function generate_ipay_ghana_checkout_form( $order_id ) {
+				global $items_array;
+				
 				$order = new WC_Order( $order_id );
-
+				$items = $order->get_items();
+				
+				if ( version_compare( WC_VERSION, '3.0', '<' ) ) {
+					foreach ( $items as $item ) {
+						$items_array[] = $item['name'];
+					}
+				} else {
+					foreach ( $items as $item ) {
+						$items_array[] = $item->get_name();
+					}
+				}
+				
+				$list_items = implode( ', ', $items_array );
+				
 				$order->add_order_note( __( 'Order placed successfully; user has been redirected to the iPay Ghana Payment Gateway checkout page.', '' ) );
 				$order->update_status( 'on-hold', __( 'Awaiting Mobile Money payment.<br>', '' ) );
 				WC()->cart->empty_cart();
@@ -244,6 +275,10 @@ function init_ipay_ghana_wc_payment_gateway() {
 
 				return '<form action="' . 'https://community.ipaygh.com/gateway' . '" method="post" id="ipay-ghana-wc-payment-gateway-checkout-url-form" target="_top">
 				<input type="hidden" name="merchant_key" value="' . esc_attr( $this->get_option( 'merchant_key' ) ) . '">
+				<input type="hidden" name="extra_src_currency" value="' . $order->get_currency() . '">
+				<input type="hidden" name="extra_mobile" value="' . $order->get_billing_phone() . '">
+				<input type="hidden" name="extra_email" value="' . $order->get_billing_email() . '">
+				<input type="hidden" name="description" value="' . esc_attr( $list_items ) . '">
 				<input type="hidden" name="success_url" value="' . esc_url( $this->get_option( 'success_url' ) ) . '">
 				<input type="hidden" name="cancelled_url" value="' . esc_url( $this->get_option( 'cancelled_url' ) ) . '">
 				<input type="hidden" name="invoice_id" value="' . str_replace( '#', '', $order->get_order_number() ) . '">
