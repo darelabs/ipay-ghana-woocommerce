@@ -3,7 +3,7 @@
 Plugin Name: iPay Ghana WooCommerce
 Plugin URI: https://www.ipaygh.com/
 Description: Receive payments on your WooCommerce store in Ghana. Already have an account? Open one with us <a href="https://manage.ipaygh.com/xmanage/get-started">here</a>. Visit your <a href="https://manage.ipaygh.com/xmanage/">dashboard</a> to monitor your transactions.
-Version: 1.0.1
+Version: 1.0.2
 Author: Digital Dreams Ltd.
 Author URI: http://www.dareworks.com/
 Text Domain:
@@ -19,24 +19,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 
-function ipay_ghana_text_domain() {
+function ipay_ghana_wc_text_domain() {
 	load_plugin_textdomain( '', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 }
-add_action( 'plugins_loaded', 'ipay_ghana_text_domain' );
+add_action( 'plugins_loaded', 'ipay_ghana_wc_text_domain' );
 
-function ipay_ghana_admin_styles_and_scripts() {
-	wp_enqueue_style( 'ipay-ghana-admin-style', plugins_url( '/assets/css/ipay-ghana-admin.css', __FILE__ ), false, '', 'all' );
-	wp_enqueue_script( 'ipay-ghana-admin-script', plugins_url( '/assets/js/ipay-ghana-admin.js', __FILE__ ), false, '' );
+function ipay_ghana_wc_admin_styles_and_scripts() {
+	wp_enqueue_style( 'ipay-ghana-wc-admin-style', plugins_url( '/assets/css/ipay-ghana-wc-admin.css', __FILE__ ), false, '', 'all' );
+	wp_enqueue_script( 'ipay-ghana-wc-admin-script', plugins_url( '/assets/js/ipay-ghana-wc-admin.js', __FILE__ ), false, '' );
 }
-add_action( 'admin_enqueue_scripts', 'ipay_ghana_admin_styles_and_scripts' );
+add_action( 'admin_enqueue_scripts', 'ipay_ghana_wc_admin_styles_and_scripts' );
 
-function ipay_ghana_styles_and_scripts() {
-	wp_enqueue_style( 'ipay-ghana-style', plugins_url( '/assets/css/ipay-ghana.css', __FILE__ ), array(), '', 'all' );
-	wp_enqueue_script( 'ipay-ghana-script', plugins_url( '/assets/js/ipay-ghana.js', __FILE__ ), array(), '', true );
+function ipay_ghana_wc_styles_and_scripts() {
+	wp_enqueue_style( 'ipay-ghana-wc-style', plugins_url( '/assets/css/ipay-ghana-wc.css', __FILE__ ), array(), '', 'all' );
+	wp_enqueue_script( 'ipay-ghana-wc-script', plugins_url( '/assets/js/ipay-ghana-wc.js', __FILE__ ), array(), '', true );
 }
-add_action( 'wp_enqueue_scripts', 'ipay_ghana_styles_and_scripts' );
+add_action( 'wp_enqueue_scripts', 'ipay_ghana_wc_styles_and_scripts' );
 
-function ipay_ghana_plugin_action( $actions, $plugin_file ) {
+function ipay_ghana_wc_plugin_action( $actions, $plugin_file ) {
 	if ( false == strpos( $plugin_file, basename( __FILE__ ) ) ) {
 		return $actions;
 	}
@@ -45,16 +45,16 @@ function ipay_ghana_plugin_action( $actions, $plugin_file ) {
 	array_unshift( $actions, $settings_link );
 	return $actions;
 }
-add_filter( 'plugin_action_links', 'ipay_ghana_plugin_action', 10, 2 );
+add_filter( 'plugin_action_links', 'ipay_ghana_wc_plugin_action', 10, 2 );
 
-function ipay_ghana_plugin_support( $meta, $plugin_file ) {
+function ipay_ghana_wc_plugin_support( $meta, $plugin_file ) {
 	if ( false == strpos( $plugin_file, basename( __FILE__ ) ) ) {
 		return $meta;
 	}
 	$meta[] = '<a href="https://www.ipaygh.com/pages/help-support" target="_blank">Support </a>';
 	return $meta;
 }
-add_filter( 'plugin_row_meta', 'ipay_ghana_plugin_support', 10, 4 );
+add_filter( 'plugin_row_meta', 'ipay_ghana_wc_plugin_support', 10, 4 );
 
 function init_ipay_ghana_wc_payment_gateway() {
 	if ( class_exists( 'WC_Payment_Gateway' ) ) {
@@ -166,7 +166,7 @@ function init_ipay_ghana_wc_payment_gateway() {
 			public function pay_for_order( $order_id ) {
 				echo '<p>' . __( 'Thank you for placing your order with us.', '' ) . '</p>';
 				echo '<p>' . __( 'You will be redirected to iPay Ghana Payment Gateway checkout page so as to complete your payment.', '' ) . '</p>';
-				echo $this->generate_ipay_ghana_checkout_form( $order_id );
+				echo $this->generate_ipay_ghana_wc_checkout_form( $order_id );
 			}
 
 			public function process_payment( $order_id ) {
@@ -249,7 +249,7 @@ function init_ipay_ghana_wc_payment_gateway() {
 				return null;
 			}
 
-			public function generate_ipay_ghana_checkout_form( $order_id ) {
+			public function generate_ipay_ghana_wc_checkout_form( $order_id ) {
 				global $items_array;
 				
 				$order = new WC_Order( $order_id );
