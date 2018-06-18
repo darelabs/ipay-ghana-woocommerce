@@ -3,7 +3,7 @@
 Plugin Name: iPay Ghana WooCommerce
 Plugin URI: https://www.ipaygh.com/
 Description: Receive payments on your WooCommerce store in Ghana. Already have an account? Open one with us <a href="https://manage.ipaygh.com/xmanage/get-started">here</a>. Visit your <a href="https://manage.ipaygh.com/xmanage/">dashboard</a> to monitor your transactions.
-Version: 1.0.2
+Version: 1.0.3
 Author: Digital Dreams Ltd.
 Author URI: http://www.dareworks.com/
 Text Domain:
@@ -196,7 +196,7 @@ function init_ipay_ghana_wc_payment_gateway() {
 					$payload = [
 						'on_site' => [
 							'merchant_key'               => $this->get_option( 'merchant_key' ),
-							'extra_src_currency'         => $order->get_currency(),
+							'currency'                   => $order->get_currency(),
 							'total'             	     => $order->get_total(),
 							'invoice_id'                 => str_replace( '#', '', $order->get_order_number() ),
 							'extra_wallet_issuer_hint'   => ( isset( $_POST['extra_wallet_issuer_hint'] ) && ! empty( $_POST['extra_wallet_issuer_hint'] ) ) ? $_POST['extra_wallet_issuer_hint'] : $_POST['extra_wallet_issuer_hint'],
@@ -275,7 +275,7 @@ function init_ipay_ghana_wc_payment_gateway() {
 
 				return '<form action="' . 'https://community.ipaygh.com/gateway' . '" method="post" id="ipay-ghana-wc-payment-gateway-checkout-url-form" target="_top">
 				<input type="hidden" name="merchant_key" value="' . esc_attr( $this->get_option( 'merchant_key' ) ) . '">
-				<input type="hidden" name="extra_src_currency" value="' . $order->get_currency() . '">
+				<input type="hidden" name="currency" value="' . $order->get_currency() . '">
 				<input type="hidden" name="extra_mobile" value="' . $order->get_billing_phone() . '">
 				<input type="hidden" name="extra_email" value="' . $order->get_billing_email() . '">
 				<input type="hidden" name="description" value="' . esc_attr( $list_items ) . '">
