@@ -3,8 +3,8 @@
 Plugin Name: iPay Ghana WooCommerce
 Plugin URI: https://www.ipaygh.com/
 Description: Receive payments on your WooCommerce store in Ghana. Already have an account? Open one with us <a href="https://manage.ipaygh.com/xmanage/get-started">here</a>. Visit your <a href="https://manage.ipaygh.com/xmanage/">dashboard</a> to monitor your transactions.
-Version: 1.0.3
-Author: Digital Dreams Ltd.
+Version: 1.0.4
+Author: iPay Solutions Ltd.
 Author URI: http://www.dareworks.com/
 Text Domain:
 Domain Path:
