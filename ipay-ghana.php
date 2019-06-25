@@ -3,9 +3,9 @@
 Plugin Name: iPay Ghana WooCommerce
 Plugin URI: https://www.ipaygh.com/
 Description: Receive payments on your WooCommerce store in Ghana. Already have an account? Open one with us <a href="https://manage.ipaygh.com/xmanage/get-started">here</a>. Visit your <a href="https://manage.ipaygh.com/xmanage/">dashboard</a> to monitor your transactions.
-Version: 1.0.4
+Version: 1.0.5
 Author: iPay Solutions Ltd.
-Author URI: http://www.dareworks.com/
+Author URI: https://www.ipaygh.com/
 Text Domain:
 Domain Path:
 License: GNU General Public License v3.0
@@ -62,7 +62,8 @@ function init_ipay_ghana_wc_payment_gateway() {
 		class Ipay_Ghana_WC_Payment_Gateway extends WC_Payment_Gateway {
 			public function __construct() {
 				$this->id                   = 'ipay-ghana-wc-payment';
-				$this->icon                 = plugins_url( '/assets/img/ipay-ghana-powered.png', __FILE__ );
+				//$this->icon                 = plugins_url( '/assets/img/ipay-ghana-powered.png', __FILE__ );
+				$this->icon                 = 'https://payments.ipaygh.com/app/webroot/img/iPay_payments.png';
 				$this->has_fields           = true;
 				$this->method_title         = __( 'iPay Ghana Payment', '' );
 				$this->init_form_fields();
@@ -146,20 +147,21 @@ function init_ipay_ghana_wc_payment_gateway() {
 				if ( $this->get_option( 'checkout_on_site' ) === 'no' ) {
 					//to iPay Checkout name="checkout"
 					echo wptexturize( __( 'Pay with MTN Mobile Money, Vodafone Cash, Tigo Cash, Airtel Money, VISA, MasterCard. No need to have an iPay Account to pay.' ) );
-				} else {
+				} 
+				else {
 					echo '<p class="form-group">
-					<label for="network_operator">Select Network</label>
-					<select id="network_operator" class="" name="extra_wallet_issuer_hint" required>
-						<option disabled selected value> -- Select One -- </option>
-						<option value="airtel">Airtel Money</option>
-						<option value="mtn">MTN Mobile Money</option>
-						<option value="tigo">tiGO Cash</option>
-					</select>
-				</p>
-				<p class="form-row form-row validate-required validate-phone" id="wallet_number_field">
-					<label for="mobile_wallet_number">Phone Number <abbr class="required" title="required">*</abbr></label>
-					<input type="tel" class="input-text" id="mobile_wallet_number" name="pymt_instrument" placeholder="Enter your wallet number here." autocomplete="on" required>
-				</p>';
+							<label for="network_operator">Select Network</label>
+							<select id="network_operator" class="" name="extra_wallet_issuer_hint" required>
+								<option disabled selected value> -- Select One -- </option>
+								<option value="airtel">Airtel Money</option>
+								<option value="mtn">MTN Mobile Money</option>
+								<option value="tigo">tiGO Cash</option>
+							</select>
+						</p>
+						<p class="form-row form-row validate-required validate-phone" id="wallet_number_field">
+							<label for="mobile_wallet_number">Phone Number <abbr class="required" title="required">*</abbr></label>
+							<input type="tel" class="input-text" id="mobile_wallet_number" name="pymt_instrument" placeholder="Enter your wallet number here." autocomplete="on" required>
+						</p>';
 				}
 			}
 
@@ -177,7 +179,8 @@ function init_ipay_ghana_wc_payment_gateway() {
 					foreach ( $items as $item ) {
 						$items_array[] = $item['name'];
 					}
-				} else {
+				} 
+				else {
 					foreach ( $items as $item ) {
 						$items_array[] = $item->get_name();
 					}
@@ -190,13 +193,14 @@ function init_ipay_ghana_wc_payment_gateway() {
 						'result' => 'success',
 						'redirect' => $order->get_checkout_payment_url( true )
 					);
-				} else {
+				} 
+				else {
 					$api = 'https://community.ipaygh.com/';
 
 					$payload = [
 						'on_site' => [
 							'merchant_key'               => $this->get_option( 'merchant_key' ),
-							'currency'                   => $order->get_currency(),
+							'extra_currency'             => $order->get_currency(),
 							'total'             	     => $order->get_total(),
 							'invoice_id'                 => str_replace( '#', '', $order->get_order_number() ),
 							'extra_wallet_issuer_hint'   => ( isset( $_POST['extra_wallet_issuer_hint'] ) && ! empty( $_POST['extra_wallet_issuer_hint'] ) ) ? $_POST['extra_wallet_issuer_hint'] : $_POST['extra_wallet_issuer_hint'],
@@ -230,7 +234,7 @@ function init_ipay_ghana_wc_payment_gateway() {
 						if ( ( $data['success'] === true ) && ( $data['status'] === 'new' ) ) {
 							$order->add_order_note( __( 'Transaction initiated successfully; a USSD prompt or message with Mobile Money payment completion steps has been triggered and sent to: ' . $wallet_number . '.', '' ) );
 							$order->update_status( 'on-hold', __( 'Awaiting Mobile Money payment.<br>', '' ) );
-//							$order->reduce_order_stock();
+							//$order->reduce_order_stock();
 							WC()->cart->empty_cart();
 
 							return [
@@ -273,9 +277,9 @@ function init_ipay_ghana_wc_payment_gateway() {
 
 				wc_enqueue_js( 'jQuery( "#submit-payload-to-ipay-ghana-wc-payment-gateway-checkout-url" ).click();' );
 
-				return '<form action="' . 'https://community.ipaygh.com/gateway' . '" method="post" id="ipay-ghana-wc-payment-gateway-checkout-url-form" target="_top">
+				return '<form action="' . 'https://manage.ipaygh.com/gateway/checkout' . '" method="post" id="ipay-ghana-wc-payment-gateway-checkout-url-form" target="_top">
 				<input type="hidden" name="merchant_key" value="' . esc_attr( $this->get_option( 'merchant_key' ) ) . '">
-				<input type="hidden" name="currency" value="' . $order->get_currency() . '">
+				<input type="hidden" name="extra_currency" value="' . $order->get_currency() . '">
 				<input type="hidden" name="extra_mobile" value="' . $order->get_billing_phone() . '">
 				<input type="hidden" name="extra_email" value="' . $order->get_billing_email() . '">
 				<input type="hidden" name="description" value="' . esc_attr( $list_items ) . '">
@@ -283,6 +287,7 @@ function init_ipay_ghana_wc_payment_gateway() {
 				<input type="hidden" name="cancelled_url" value="' . esc_url( $this->get_option( 'cancelled_url' ) ) . '">
 				<input type="hidden" name="invoice_id" value="' . str_replace( '#', '', $order->get_order_number() ) . '">
 				<input type="hidden" name="total" value="' . $order->get_total() . '">
+				<input type="hidden" name="source" value="WOOCOMMERCE">
 				<input type="hidden" name="extra_project_name" value="' . $this->get_option( 'extra_project_name' ) . '">
 				<div class="btn-submit-payment" style="display: none;">
 				<button type="submit" class="button alt" id="submit-payload-to-ipay-ghana-wc-payment-gateway-checkout-url">' . __( 'Checkout with iPay Ghana', '' ) . '</button>
@@ -297,12 +302,12 @@ function init_ipay_ghana_wc_payment_gateway() {
 				// if success, reduce corresponding stock and mark transaction status as complete
 				// if failed or declined, mark transaction status as canceled
 
-//				$order->payment_complete();
+				//$order->payment_complete();
 
-//				return array(
-//					'result' => 'success',
-//					'redirect' => $this->get_return_url( $order_id )
-//				);
+				//return array(
+				//'result' => 'success',
+				//'redirect' => $this->get_return_url( $order_id )
+				//);
 			}
 		}
 

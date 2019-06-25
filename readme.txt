@@ -2,9 +2,9 @@
 Contributors: ipayghana, nyedidikeke
 Tags: e-commerce, commerce, sales, sell, store, shop, cart, checkout, woo commerce, ipay-ghana
 Requires at least: 4.5
-Tested up to: 4.9
+Tested up to: 5.2
 Requires PHP: 5.2.4
-Stable tag: 1.0.3
+Stable tag: 1.0.5
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -60,6 +60,12 @@ Yes; you can contribute to our [GitHub repository](https://github.com/darelabs/i
 
 == Changelog ==
 
+= 1.0.5 - 2019-06-24 =
+* Feature - Updated Plugin to point to new robust, user friendly checkout page.
+
+= 1.0.4 - 2018-08-15 =
+* Fix - Changed name of author (from Dreams Ltd. to iPay Solutions Ltd).
+
 = 1.0.3 - 2018-06-18 =
 * Feature - Updated field (currency)
 
@@ -76,5 +82,5 @@ Yes; you can contribute to our [GitHub repository](https://github.com/darelabs/i
 
 == Upgrade Notice ==
 
-= 1.0.3 =
-1.0.3 is a minor update. Do upgrade for a tailored multi-currency support.
+= 1.0.5 =
+1.0.5 is a minor update. Redirect to updated, robust and user friendly Checkout page.
