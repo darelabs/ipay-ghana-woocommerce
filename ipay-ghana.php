@@ -62,7 +62,6 @@ function init_ipay_ghana_wc_payment_gateway() {
 		class Ipay_Ghana_WC_Payment_Gateway extends WC_Payment_Gateway {
 			public function __construct() {
 				$this->id                   = 'ipay-ghana-wc-payment';
-				//$this->icon                 = plugins_url( '/assets/img/ipay-ghana-powered.png', __FILE__ );
 				$this->icon                 = 'https://payments.ipaygh.com/app/webroot/img/iPay_payments.png';
 				$this->has_fields           = true;
 				$this->method_title         = __( 'iPay Ghana Payment', '' );
