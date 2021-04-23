@@ -51,7 +51,7 @@ function ipay_ghana_wc_plugin_support( $meta, $plugin_file ) {
 	if ( false == strpos( $plugin_file, basename( __FILE__ ) ) ) {
 		return $meta;
 	}
-	$meta[] = '<a href="https://www.ipaygh.com/pages/help-support" target="_blank">Support </a>';
+	$meta[] = '<a href="https://docs.ipaygh.com" target="_blank">Support </a>';
 	return $meta;
 }
 add_filter( 'plugin_row_meta', 'ipay_ghana_wc_plugin_support', 10, 4 );
