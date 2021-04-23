@@ -2,9 +2,9 @@
 Contributors: ipayghana, nyedidikeke
 Tags: e-commerce, commerce, sales, sell, store, shop, cart, checkout, woo commerce, ipay-ghana
 Requires at least: 4.5
-Tested up to: 5.2
+Tested up to: 5.7
 Requires PHP: 5.2.4
-Stable tag: 1.0.5
+Stable tag: 1.0.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -20,7 +20,7 @@ Visit our [get started](https://manage.ipaygh.com/xmanage/get-started) page and 
 
 = Minimum Requirements =
 * WooCommerce plugin version 3.0.1 or greater
-* iPay Ghana Merchant account (login or signup [here](https://manage.ipaygh.com/xmanage/get-started) to get started)
+* iPay Ghana Merchant account (login or sign up [here](https://manage.ipaygh.com/xmanage/get-started) to get started)
 * PHP version 5.2.4 or greater (PHP 7.2 or greater is recommended)
 * MySQL version 5.0 or greater (MySQL 5.6 or greater is recommended)
 * You should also check [WordPress requirements](http://wordpress.org/about/requirements/) and [WooCommerce requirements](https://docs.woocommerce.com/document/server-requirements/)
@@ -60,6 +60,9 @@ Yes; you can contribute to our [GitHub repository](https://github.com/darelabs/i
 
 == Changelog ==
 
+= 1.0.6 - 2021-04-23 =
+* Fix - Typos and broken links.
+
 = 1.0.5 - 2019-06-24 =
 * Feature - Updated Plugin to point to new robust, user friendly checkout page.
 
@@ -82,5 +85,5 @@ Yes; you can contribute to our [GitHub repository](https://github.com/darelabs/i
 
 == Upgrade Notice ==
 
-= 1.0.5 =
-1.0.5 is a minor update. Redirect to updated, robust and user friendly Checkout page.
+= 1.0.6 =
+1.0.6 is a minor update. Broken links and typos fixes with WordPress 5.7 compatibility.
