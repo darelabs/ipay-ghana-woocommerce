@@ -4,7 +4,7 @@ Tags: e-commerce, commerce, sales, sell, store, shop, cart, checkout, woo commer
 Requires at least: 4.5
 Tested up to: 5.7
 Requires PHP: 5.2.4
-Stable tag: 1.0.6
+Stable tag: 1.0.7
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -60,6 +60,10 @@ Yes; you can contribute to our [GitHub repository](https://github.com/darelabs/i
 
 == Changelog ==
 
+= 1.0.7 - 2021-04-26 =
+* Fix - Normalisation of notification with dashboard status.
+* Feature - Payment notification support.
+
 = 1.0.6 - 2021-04-23 =
 * Fix - Typos and broken links.
 
@@ -85,5 +89,5 @@ Yes; you can contribute to our [GitHub repository](https://github.com/darelabs/i
 
 == Upgrade Notice ==
 
-= 1.0.6 =
-1.0.6 is a minor update. Broken links and typos fixes with WordPress 5.7 compatibility.
+= 1.0.7 =
+1.0.7 is a minor update. Normalisation of status and support for payment notification.

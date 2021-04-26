@@ -3,7 +3,7 @@
 Plugin Name: iPay Ghana WooCommerce
 Plugin URI: https://www.ipaygh.com/
 Description: Receive payments on your WooCommerce store in Ghana. Already have an account? Open one with us <a href="https://manage.ipaygh.com/xmanage/get-started">here</a>. Visit your <a href="https://manage.ipaygh.com/xmanage/">dashboard</a> to monitor your transactions.
-Version: 1.0.6
+Version: 1.0.7
 Author: iPay Solutions Ltd.
 Author URI: https://www.ipaygh.com/
 Text Domain:
@@ -68,12 +68,22 @@ function init_ipay_ghana_wc_payment_gateway() {
 				$this->init_form_fields();
 				$this->init_settings();
 				$this->title                = $this->get_option( 'title' );
-				$this->ipn_url              = str_replace( 'https:', 'http:', home_url( '/wc-api/Ipay_Ghana_WC_Payment_Gateway' ) );
 
 				add_action( 'admin_notices', array( $this, 'do_ssl_check' ) );
 				add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 				add_action( 'woocommerce_receipt_' . $this->id, array( $this, 'pay_for_order' ) );
 				add_action( 'woocommerce_api_' . $this->id, array( $this, 'check_ipn_response' ) );
+			}
+
+			public function ipn_url() {
+				$ipn_url = '';
+
+				if ( version_compare( WC_VERSION, '2.0', '<' ) ) {
+					$ipn_url = str_replace( 'https:', 'http:', add_query_arg( 'wc-api', $this->id, home_url( '/' ) ) );
+				} else {
+					$ipn_url = str_replace( 'https:', 'http:', home_url( '/wc-api/' . $this->id ) );
+				}
+				return $ipn_url;
 			}
 
 			public function do_ssl_check() {
@@ -125,6 +135,13 @@ function init_ipay_ghana_wc_payment_gateway() {
 						'default'     => __( '', '' ),
 						'desc_tip'    => true,
 					),
+					'merchant_id' => array(
+						'title'       => __( 'Merchant ID', '' ),
+						'type'        => 'text',
+						'description' => __( 'Login to your iPay Dashboard to get your Merchant ID under Account Settings Tab.', '' ),
+						'default'     => __( '', '' ),
+						'desc_tip'    => true,
+					),
 					'success_url' => array(
 						'title'       => __( 'Success URL', '' ),
 						'type'        => 'text',
@@ -137,6 +154,14 @@ function init_ipay_ghana_wc_payment_gateway() {
 						'type'        => 'text',
 						'description' => __( 'The page to which iPay will redirect the user after user cancels the order.', '' ),
 						'default'     => __( '', '' ),
+						'desc_tip'    => true,
+					),
+					'ipn_url' => array(
+						'title'       => __( 'Payment notification link', '' ),
+						'type'        => 'text',
+						'class'       => 'is-read-only',
+						'description' => __( 'To receive payment update notifications to your store/order, copy this URL and save it in your ipay dashboard, in the IPN_URL field, under account settings tab.', '' ),
+						'default'     => __( esc_url( $this->ipn_url() ), '' ),
 						'desc_tip'    => true,
 					),
 				);
@@ -232,8 +257,8 @@ function init_ipay_ghana_wc_payment_gateway() {
 					if ( $response['response']['code'] === 200 ) {
 						if ( ( $data['success'] === true ) && ( $data['status'] === 'new' ) ) {
 							$order->add_order_note( __( 'Transaction initiated successfully; a USSD prompt or message with Mobile Money payment completion steps has been triggered and sent to: ' . $wallet_number . '.', '' ) );
-							$order->update_status( 'on-hold', __( 'Awaiting Mobile Money payment.<br>', '' ) );
-							//$order->reduce_order_stock();
+							// $order->update_status( 'on-hold', __( 'Awaiting Mobile Money payment.<br>', '' ) );
+							// $order->reduce_order_stock();
 							WC()->cart->empty_cart();
 
 							return [
@@ -271,7 +296,6 @@ function init_ipay_ghana_wc_payment_gateway() {
 				$list_items = implode( ', ', $items_array );
 				
 				$order->add_order_note( __( 'Order placed successfully; user has been redirected to the iPay Ghana Payment Gateway checkout page.', '' ) );
-				$order->update_status( 'on-hold', __( 'Awaiting Mobile Money payment.<br>', '' ) );
 				WC()->cart->empty_cart();
 
 				wc_enqueue_js( 'jQuery( "#submit-payload-to-ipay-ghana-wc-payment-gateway-checkout-url" ).click();' );
@@ -294,19 +318,46 @@ function init_ipay_ghana_wc_payment_gateway() {
 				</form>';
 			}
 
-			public function check_ipn_response( $order_id ) {
-				$order = new WC_Order( $order_id );
+			public function check_ipn_response() {
+				if ( $_SERVER['REQUEST_METHOD'] === 'POST' && isset( $_SERVER['HTTP_AUTHORIZATION'] ) ) {
+					$merchant_key = $this->get_option( 'merchant_key' );
+					$merchant_id  = $this->get_option( 'merchant_id' );
+					$auth         = sanitize_text_field( $_SERVER['HTTP_AUTHORIZATION'] );
+					$auth_array   = explode( ' ', $auth );
+					$credential   = explode( ':', base64_decode( $auth_array[1] ) );
+					$username     = $credential[0];
+					$password     = $credential[1];
 
-				// Check iPay Ghana response
-				// if success, reduce corresponding stock and mark transaction status as complete
-				// if failed or declined, mark transaction status as canceled
+					if ( $username === $merchant_key && $password === $merchant_id ) {
+						$raw_post_data  = file_get_contents( 'php://input' );
 
-				//$order->payment_complete();
+						if ( $raw_post_data !== null ) {
+							$raw_post_array = json_decode( $raw_post_data, true );
+							$status         = sanitize_text_field( $raw_post_array['status'] );
+							$status_reason  = sanitize_text_field( $raw_post_array['status_reason'] );
+							$invoice        = sanitize_text_field( $raw_post_array['invoice'] );
+							$order          = new WC_Order( $invoice );
 
-				//return array(
-				//'result' => 'success',
-				//'redirect' => $this->get_return_url( $order_id )
-				//);
+							if ( $status === 'paid' ) {
+								$order->update_status( 'processing', __( esc_html( $status_reason ) . '<br>', '' ) );
+								wc_reduce_stock_levels( $order->id );
+								$order->payment_complete();
+							} elseif ( $status === 'pending' ) {
+								$order->update_status( 'pending', __( esc_html( $status_reason ) . '<br>', '' ) );
+							} elseif ( $status === 'cancelled' || 'expired' || 'failed' ) {
+								$order->update_status( 'cancelled', __( esc_html( $status_reason ) . '<br>', '' ) );
+							}
+
+							header( 'HTTP/1.1 200 OK' );
+							exit();
+						} else {
+							wp_die( 'iPay Ghana WooCommerce Payment Gateway IPN Unprocessable Entity.', '', array( 'response' => 422 ) );
+						}
+					} else {
+						wp_die( 'iPay Ghana WooCommerce Payment Gateway IPN Authorization Required.', '', array( 'response' => 401 ) );
+					}
+				}
+				wp_die( 'iPay Ghana WooCommerce Payment Gateway IPN Request Failure.', '', array( 'response' => 500 ) );
 			}
 		}
 
