@@ -3,7 +3,7 @@
 Plugin Name: iPay Ghana WooCommerce
 Plugin URI: https://www.ipaygh.com/
 Description: Receive payments on your WooCommerce store in Ghana. Already have an account? Open one with us <a href="https://manage.ipaygh.com/xmanage/get-started">here</a>. Visit your <a href="https://manage.ipaygh.com/xmanage/">dashboard</a> to monitor your transactions.
-Version: 1.0.7
+Version: 1.0.8
 Author: iPay Solutions Ltd.
 Author URI: https://www.ipaygh.com/
 Text Domain:
@@ -319,7 +319,9 @@ function init_ipay_ghana_wc_payment_gateway() {
 			}
 
 			public function check_ipn_response() {
-				if ( $_SERVER['REQUEST_METHOD'] === 'POST' && isset( $_SERVER['HTTP_AUTHORIZATION'] ) ) {
+				if ( $_SERVER['REQUEST_METHOD'] !== 'POST' ) {
+					wp_die( 'iPay Ghana WooCommerce Payment Gateway IPN Method Not Allowed.', '', array( 'response' => 405 ) );
+				} elseif ( $_SERVER['REQUEST_METHOD'] === 'POST' && isset( $_SERVER['HTTP_AUTHORIZATION'] ) ) {
 					$merchant_key = $this->get_option( 'merchant_key' );
 					$merchant_id  = $this->get_option( 'merchant_id' );
 					$auth         = sanitize_text_field( $_SERVER['HTTP_AUTHORIZATION'] );
@@ -336,12 +338,17 @@ function init_ipay_ghana_wc_payment_gateway() {
 							$status         = sanitize_text_field( $raw_post_array['status'] );
 							$status_reason  = sanitize_text_field( $raw_post_array['status_reason'] );
 							$invoice        = sanitize_text_field( $raw_post_array['invoice'] );
+							$amount         = sanitize_text_field( $raw_post_array['amount'] );
 							$order          = new WC_Order( $invoice );
 
 							if ( $status === 'paid' ) {
-								$order->update_status( 'processing', __( esc_html( $status_reason ) . '<br>', '' ) );
-								wc_reduce_stock_levels( $order->id );
-								$order->payment_complete();
+								if ( is_string( $amount ) && $order->total === $amount ) {
+									$order->update_status( 'processing', __( esc_html( $status_reason ) . '<br>', '' ) );
+									wc_reduce_stock_levels( $order->id );
+									$order->payment_complete();
+								} else {
+									wp_die( 'iPay Ghana WooCommerce Payment Gateway IPN Amount Discrepancy. ' . $order->total . ' expected.', '', array( 'response' => 403 ) );
+								}
 							} elseif ( $status === 'pending' ) {
 								$order->update_status( 'pending', __( esc_html( $status_reason ) . '<br>', '' ) );
 							} elseif ( $status === 'cancelled' || 'expired' || 'failed' ) {
